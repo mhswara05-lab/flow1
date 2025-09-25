@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Tingkat Flow Karyawan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="background-waves">
+        <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path class="wave-path" fill-opacity="1" d="M0,192L48,176C96,160,192,128,288,106.7C384,85,480,75,576,90.7C672,107,768,149,864,176C960,203,1056,213,1152,208C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+
+    <div class="container" id="welcome-container">
+        <div class="welcome-grid">
+            <div class="welcome-column-left">
+                <header class="welcome-header">
+                    <h1>PFS (Psychological Flow Scale)</h1>
+                </header>
+                <main class="welcome-main">
+                    <p class="welcome-description">
+                        Alat ukur ini membantu Anda memahami tingkat "flow" atau keterlibatan penuh saat melakukan sebuah aktivitas.
+                    </p>
+                    <div class="input-group">
+                        <label for="activity-input">Aktivitas yang Dinilai</label>
+                        <input type="text" id="activity-input" placeholder="Contoh: Mengerjakan laporan bulanan" required>
+                    </div>
+                </main>
+            </div>
+            <div class="welcome-column-right">
+                <div class="input-group">
+                    <label for="name-input">Nama Anda</label>
+                    <input type="text" id="name-input" placeholder="Masukkan nama lengkap Anda" required>
+                </div>
+                <div class="input-group">
+                    <label>Jenis Kelamin</label>
+                    <div class="gender-options">
+                        <input type="radio" id="laki-laki" name="gender" value="Laki-laki" checked>
+                        <label for="laki-laki">Laki-laki</label>
+                        <input type="radio" id="perempuan" name="gender" value="Perempuan">
+                        <label for="perempuan">Perempuan</label>
+                    </div>
+                </div>
+                <button type="button" id="next-btn">Lanjut</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container" id="questionnaire-container">
+        <header>
+            <h1>PFS (Psychological Flow Scale)</h1>
+        </header>
+        <div class="header-wave-separator">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+            </svg>
+        </div>
+        <main>
+            <div id="questionnaire-content">
+                <div class="instructions">
+                    <p>Geser slider untuk menilai setiap pernyataan sesuai dengan pengalaman Anda.</p>
+                </div>
+                <div id="progress-container">
+                    <div id="progress-bar"><div id="progress-bar-inner"></div></div>
+                    <p id="progress-text">0/9 Selesai</p>
+                </div>
+                <form id="pfs-form"></form>
+                <div class="submit-container">
+                    <button id="submit-btn" type="button" disabled>Selesai & Lihat Hasil</button>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <p>Berdasarkan Psychological Flow Scale (PFS), Norsworthy, C., dkk. (2023).</p>
+        </footer>
+    </div>
+
+    <div class="container" id="results-container">
+        <div class="results-grid">
+            <div class="results-column-left">
+                <div class="results-left-content">
+                    <header class="results-header">
+                        <h1>PFS (Psychological Flow Scale) Anda</h1>
+                    </header>
+                    <main class="results-main">
+                        <div id="result-summary"></div>
+                        <div class="score-display">
+                            <h3>Skor Flow Global Anda</h3>
+                            <p class="global-score" id="global-score-value">0 <span>/ 100</span></p>
+                            <p class="score-interpretation" id="global-interpretation"></p>
+                            <div class="spectrum-container">
+                                <div class="spectrum-bar"></div>
+                                <div class="spectrum-labels"><span>Rendah</span><span>Tinggi</span></div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+            <div class="results-column-right">
+                <div class="results-background-waves">
+                    <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+                        <path class="wave-path-subtle" fill-opacity="1" d="M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,90.7C672,85,768,107,864,128C960,149,1056,160,1152,160C1248,160,1344,149,1392,144L1440,139L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                    </svg>
+                </div>
+                <h3 class="dimension-title">Rincian Skor Dimensi</h3>
+                <div class="dimension-scores">
+                    <div class="dimension-score-card">
+                        <p><strong>Absorption</strong> (Penghayatan)</p>
+                        <div class="circular-progress" id="absorption-circle">
+                            <span class="progress-value" id="absorption-value">0</span>
+                        </div>
+                        <p class="dimension-score-text" id="absorption-score">0.00 / 100</p>
+                        <p class="score-interpretation" id="absorption-interpretation"></p>
+                    </div>
+                    <div class="dimension-score-card">
+                        <p><strong>Effortless Control</strong> (Kontrol Mudah)</p>
+                        <div class="circular-progress" id="control-circle">
+                            <span class="progress-value" id="control-value">0</span>
+                        </div>
+                        <p class="dimension-score-text" id="control-score">0.00 / 100</p>
+                        <p class="score-interpretation" id="control-interpretation"></p>
+                    </div>
+                    <div class="dimension-score-card">
+                        <p><strong>Intrinsic Reward</strong> (Imbalan Intrinsik)</p>
+                        <div class="circular-progress" id="reward-circle">
+                            <span class="progress-value" id="reward-value">0</span>
+                        </div>
+                        <p class="dimension-score-text" id="reward-score">0.00 / 100</p>
+                        <p class="score-interpretation" id="reward-interpretation"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="results-footer">
+            <p>Terima kasih telah menyelesaikan tes.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
