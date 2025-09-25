@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressText = document.getElementById('progress-text');
     
     const questions = [
-       "Saya tenggelam dalam aktivitas [aktivitas].",
+       "Saya hanyut ketika melakukan aktivitas [aktivitas].",
         "Saya sangat fokus pada aktivitas [aktivitas].",
         "Semua perhatian saya tertuju pada aktivitas [aktivitas].",
         "Saya merasa bisa dengan mudah mengontrol apa yang saya lakukan .",
@@ -251,3 +251,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
