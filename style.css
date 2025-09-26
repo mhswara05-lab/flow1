@@ -485,7 +485,7 @@ footer {
         padding: 15px;
     }
     .slider-wrapper {
-        flex-direction: column;
+        
     }
     .slider-end-label {
         margin: 5px;
@@ -495,3 +495,4 @@ footer {
     }
 
 }
+
