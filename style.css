@@ -1,17 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 
-/* -- GANTI DENGAN INI -- */
 :root {
-    /* Spektrum Warna Biru Baru */
-    --blue-100: #BBDEFB; /* Paling terang */
+    --blue-100: #BBDEFB;
     --blue-200: #90CAF9;
     --blue-300: #64B5F6;
     --blue-400: #42A5F5;
-    --blue-500: #2196F3; /* Biru utama */
+    --blue-500: #2196F3;
     --blue-600: #1E88E5;
-    --blue-700: #1976D2; /* Paling gelap */
-
-    /* Variabel Aplikasi Menggunakan Spektrum Baru */
+    --blue-700: #1976D2;
     --primary-blue: var(--blue-500);
     --light-blue: var(--blue-100);
     --dark-blue: var(--blue-700);
@@ -202,22 +198,33 @@ main {
     color: var(--primary-blue);
 }
 .slider-wrapper {
-    display: flex; align-items: center; gap: 15px;
+    position: relative;
+    padding-top: 20px;
 }
 .slider-container {
-    flex-grow: 1; position: relative; padding-top: 20px;
+    flex-grow: 1; position: relative;
 }
 .slider-end-label {
-    font-size: 0.85em; color: #6c757d; white-space: nowrap;
+    position: absolute;
+    top: 0;
+    font-size: 0.85em; 
+    color: #6c757d; 
+    white-space: nowrap;
+}
+.slider-wrapper .slider-end-label:first-child {
+    left: 0;
+}
+.slider-wrapper .slider-end-label:last-child {
+    right: 0;
 }
 .slider-value {
-    position: absolute; top: -10px; left: 50%; transform: translateX(-50%) scale(0); background-color: var(--primary-blue); color: white; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.9em; opacity: 0; transition: transform 0.2s ease, opacity 0.2s ease;
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%) scale(0); background-color: var(--primary-blue); color: white; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.9em; opacity: 0; transition: transform 0.2s ease, opacity 0.2s ease;
 }
 .rating-slider:active + .slider-value {
     transform: translateX(-50%) scale(1); opacity: 1;
 }
 .rating-slider {
-    -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 5px; outline: none; cursor: pointer; --slider-color: #cce5ff; --value-percent: 0%; background: linear-gradient(to right, var(--slider-color) var(--value-percent), #e9ecef var(--value-percent)); transition: background 0.2s ease;
+    -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 5px; outline: none; cursor: pointer; --slider-color: var(--blue-200); --value-percent: 0%; background: linear-gradient(to right, var(--slider-color) var(--value-percent), #e9ecef var(--value-percent)); transition: background 0.2s ease;
 }
 .rating-slider::-webkit-slider-thumb {
     -webkit-appearance: none; appearance: none; width: 24px; height: 24px; background: var(--slider-color); border-radius: 50%; border: 3px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2); margin-top: -8px; transition: transform 0.2s ease, background-color 0.2s ease;
@@ -366,12 +373,32 @@ main {
     color: rgba(255, 255, 255, 0.7);
     margin-top: 5px;
 }
+.dimension-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.dimension-title-icon {
+    width: 30px;
+    height: 30px;
+    opacity: 0.2;
+}
+.dimension-title-icon .wind-spiral-path {
+    stroke: var(--primary-blue);
+    animation: spin 10s linear infinite;
+    transform-origin: center;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
 .dimension-title {
-    text-align: center;
     font-size: 1.4em;
     font-weight: 700;
     color: var(--text-color);
-    margin-bottom: 20px;
+    margin: 0;
     position: relative;
     z-index: 1;
 }
@@ -473,6 +500,9 @@ footer {
     .dimension-scores {
         flex-wrap: wrap;
     }
+    .dimension-title-container {
+        padding-top: 20px;
+    }
     body {
         padding: 0;
     }
@@ -485,7 +515,7 @@ footer {
         padding: 15px;
     }
     .slider-wrapper {
-        
+        flex-direction: column;
     }
     .slider-end-label {
         margin: 5px;
@@ -493,6 +523,4 @@ footer {
     .global-score {
         font-size: 4em;
     }
-
 }
-
