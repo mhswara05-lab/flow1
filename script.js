@@ -41,10 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
         questionnaireContainer.style.display = 'block';
     });
 
-    function getColorForSlider(value) {
-        const colors = ["#cce5ff", "#8ccaff", "#4da3ff", "#007bff", "#0056b3", "#004085", "#003875"];
-        return colors[value - 1] || colors[0];
-    }
+     function getColorForSlider(value) {
+    // Menggunakan spektrum warna baru
+    const colors = ["#BBDEFB", "#90CAF9", "#64B5F6", "#42A5F5", "#2196F3", "#1E88E5", "#1976D2"];
+    return colors[value - 1] || colors[0];
+}
 
     function generateQuestions(activity) {
         questions.forEach((q, index) => {
@@ -132,14 +133,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const scale = (score) => ((score - 1) / 6) * 99 + 1;
 
     function getInterpretation(score) {
-        if (score > 85.7) return { text: "Sangat Tinggi", color: "#003875" };
-        if (score > 71.4) return { text: "Tinggi", color: "#0056b3" };
-        if (score > 57.1) return { text: "Cukup Tinggi", color: "#007bff" };
-        if (score > 42.8) return { text: "Sedang", color: "#4da3ff" };
-        if (score > 28.5) return { text: "Cukup Rendah", color: "#8ccaff" };
-        if (score > 14.2) return { text: "Rendah", color: "#cce5ff" };
-        return { text: "Sangat Rendah", color: "#e9f5ff" };
-    }
+    // Menggunakan spektrum warna baru
+    if (score > 85.7) return { text: "Sangat Tinggi", color: "#1976D2" };
+    if (score > 71.4) return { text: "Tinggi", color: "#1E88E5" };
+    if (score > 57.1) return { text: "Cukup Tinggi", color: "#2196F3" };
+    if (score > 42.8) return { text: "Sedang", color: "#42A5F5" };
+    if (score > 28.5) return { text: "Cukup Rendah", color: "#64B5F6" };
+    if (score > 14.2) return { text: "Rendah", color: "#90CAF9" };
+    return { text: "Sangat Rendah", color: "#BBDEFB" };
+}
     
     function updateSpectrumBar(score) {
         const spectrumBar = document.querySelector('.spectrum-bar');
@@ -251,4 +253,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
 
