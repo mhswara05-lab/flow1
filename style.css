@@ -1,11 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 
+/* -- GANTI DENGAN INI -- */
 :root {
-    --primary-blue: #007bff;
-    --light-blue: #e9f5ff;
-    --dark-blue: #0056b3;
+    /* Spektrum Warna Biru Baru */
+    --blue-100: #BBDEFB; /* Paling terang */
+    --blue-200: #90CAF9;
+    --blue-300: #64B5F6;
+    --blue-400: #42A5F5;
+    --blue-500: #2196F3; /* Biru utama */
+    --blue-600: #1E88E5;
+    --blue-700: #1976D2; /* Paling gelap */
+
+    /* Variabel Aplikasi Menggunakan Spektrum Baru */
+    --primary-blue: var(--blue-500);
+    --light-blue: var(--blue-100);
+    --dark-blue: var(--blue-700);
     --text-color: #3a3a3a;
-    --score-color: #ff4757; 
     --bg-gradient-start: #f4f7f9;
     --bg-gradient-end: #e6eef2;
     --font-family-sans: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -483,4 +493,5 @@ footer {
     .global-score {
         font-size: 4em;
     }
+
 }
