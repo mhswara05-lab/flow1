@@ -16,15 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressText = document.getElementById('progress-text');
     
     const questions = [
-        "Saya hanyut ketika melakukan aktivitas [aktivitas].",
-        "Saya sangat fokus pada aktivitas [aktivitas].",
-        "Semua perhatian saya tertuju pada aktivitas [aktivitas].",
-        "Saya merasa bisa dengan mudah mengontrol apa yang saya lakukan.",
-        "Ketika [aktivitas], saya mengalir dengan mudah.",
-        "Ada rasa kelancaran dalam tindakan [aktivitas] saya.",
-        "Saya merasa pengalaman [aktivitas] berharga.",
-        "Pengalaman [aktivitas] terasa memuaskan.",
-        "Saya ingin merasakan perasaan dari pengalaman [aktivitas] lagi."
+        "Saya tenggelam dalam [aktivitas].", "Saya sangat fokus pada [aktivitas].", "Semua perhatian saya tertuju pada [aktivitas].", "Saya merasa bisa dengan mudah mengontrol apa yang saya lakukan.", "Tindakan saya mengalir dengan mudah.", "Ada rasa kelancaran dalam tindakan saya.", "Saya merasa pengalaman itu berharga.", "Pengalaman itu terasa memuaskan.", "Saya ingin merasakan perasaan dari pengalaman itu lagi."
     ];
     const totalQuestions = questions.length;
     let userAnswers = {};
@@ -57,8 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
             questionCard.innerHTML = `
                 <p class="question-text">${qNumber}. ${dynamicQuestionText}</p>
                 <div class="slider-wrapper">
-                    <span class="slider-end-label">Sangat Tidak Setuju</span>
-                    <span class="slider-end-label">Sangat Setuju</span>
+                    <div class="slider-labels-top">
+                        <span class="slider-end-label">Sangat Tidak Setuju</span>
+                        <span class="slider-end-label">Sangat Setuju</span>
+                    </div>
                     <div class="slider-container">
                         <span class="slider-value">1</span>
                         <input type="range" min="1" max="7" value="1" class="rating-slider" id="q${qNumber}">
