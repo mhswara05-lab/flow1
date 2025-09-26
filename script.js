@@ -1,18 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Variabel dan elemen
+    // Variabel untuk setiap "Halaman"
     const welcomeContainer = document.getElementById('welcome-container');
     const questionnaireContainer = document.getElementById('questionnaire-container');
     const resultsContainer = document.getElementById('results-container');
+    
+    // Elemen Halaman 1
     const nextBtn = document.getElementById('next-btn');
     const nameInput = document.getElementById('name-input');
     const activityInput = document.getElementById('activity-input');
+
+    // Elemen Halaman 2
     const form = document.getElementById('pfs-form');
     const submitBtn = document.getElementById('submit-btn');
     const progressBarInner = document.getElementById('progress-bar-inner');
     const progressText = document.getElementById('progress-text');
     
     const questions = [
-        "Saya hanyut ketika melakukan aktivitas [aktivitas].",
+        "Saya hanyut dalam aktivitas [aktivitas].",
         "Saya sangat fokus pada aktivitas [aktivitas].",
         "Semua perhatian saya tertuju pada aktivitas [aktivitas].",
         "Saya merasa bisa dengan mudah mengontrol apa yang saya lakukan.",
@@ -25,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalQuestions = questions.length;
     let userAnswers = {};
 
+    // Pindah dari Halaman 1 ke Halaman 2
     nextBtn.addEventListener('click', () => {
         const userName = nameInput.value.trim();
         const userActivity = activityInput.value.trim();
