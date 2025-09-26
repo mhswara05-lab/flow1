@@ -47,32 +47,36 @@ document.addEventListener('DOMContentLoaded', () => {
         return colors[value - 1] || colors[0];
     }
 
-    function generateQuestions(activity) {
-        form.innerHTML = '';
-        questions.forEach((q, index) => {
-            const qNumber = index + 1;
-            const dynamicQuestionText = q.replace(/\[aktivitas\]/g, `<strong>"${activity}"</strong>`);
-            const questionCard = document.createElement('div');
-            questionCard.className = 'question-card'; 
-            questionCard.innerHTML = `
-                <p class="question-text">${qNumber}. ${dynamicQuestionText}</p>
-                <div class="slider-wrapper">
-                    <span class="slider-end-label">Sangat Tidak Setuju</span>
-                    <span class="slider-end-label">Sangat Setuju</span>
-                    <div class="slider-container">
-                        <span class="slider-value">1</span>
-                        <input type="range" min="1" max="7" value="1" class="rating-slider" id="q${qNumber}">
-                        <div class="slider-labels">
-                            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
-                        </div>
+    // GANTI FUNGSI LAMA DENGAN INI
+function generateQuestions(activity) {
+    form.innerHTML = '';
+    questions.forEach((q, index) => {
+        const qNumber = index + 1;
+        const dynamicQuestionText = q.replace(/\[aktivitas\]/g, `<strong>"${activity}"</strong>`);
+        const questionCard = document.createElement('div');
+        questionCard.className = 'question-card'; 
+
+        // Struktur HTML baru yang lebih sederhana
+        questionCard.innerHTML = `
+            <p class="question-text">${qNumber}. ${dynamicQuestionText}</p>
+            <div class="slider-wrapper">
+                <span class="slider-end-label">Sangat Tidak Setuju</span>
+                <span class="slider-end-label">Sangat Setuju</span>
+                <div class="slider-container">
+                    <span class="slider-value">1</span>
+                    <input type="range" min="1" max="7" value="1" class="rating-slider" id="q${qNumber}">
+                    <div class="slider-labels">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
                     </div>
-                </div>`;
-            form.appendChild(questionCard);
-            const slider = questionCard.querySelector('.rating-slider');
-            slider.style.setProperty('--value-percent', `0%`);
-            slider.style.setProperty('--slider-color', getColorForSlider(1));
-        });
-    }
+                </div>
+            </div>`;
+
+        form.appendChild(questionCard);
+        const slider = questionCard.querySelector('.rating-slider');
+        slider.style.setProperty('--value-percent', `0%`);
+        slider.style.setProperty('--slider-color', getColorForSlider(1));
+    });
+}
 
     form.addEventListener('input', (event) => {
         if (event.target.classList.contains('rating-slider')) {
@@ -300,3 +304,4 @@ document.addEventListener('DOMContentLoaded', () => {
         valueSpan.style.color = color;
     }
 });
+
