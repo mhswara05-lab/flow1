@@ -16,7 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressText = document.getElementById('progress-text');
     
     const questions = [
-        "Saya tenggelam dalam [aktivitas].", "Saya sangat fokus pada [aktivitas].", "Semua perhatian saya tertuju pada [aktivitas].", "Saya merasa bisa dengan mudah mengontrol apa yang saya lakukan.", "Tindakan saya mengalir dengan mudah.", "Ada rasa kelancaran dalam tindakan saya.", "Saya merasa pengalaman itu berharga.", "Pengalaman itu terasa memuaskan.", "Saya ingin merasakan perasaan dari pengalaman itu lagi."
+        "Saya hanyut ketika melakukan aktivitas [aktivitas].",
+        "Saya sangat fokus pada aktivitas [aktivitas].",
+        "Semua perhatian saya tertuju pada aktivitas [aktivitas].",
+        "Saya merasa bisa dengan mudah mengontrol apa yang saya lakukan.",
+        "Ketika [aktivitas], saya mengalir dengan mudah.",
+        "Ada rasa kelancaran dalam tindakan [aktivitas] saya.",
+        "Saya merasa pengalaman [aktivitas] berharga.",
+        "Pengalaman [aktivitas] terasa memuaskan.",
+        "Saya ingin merasakan perasaan dari pengalaman [aktivitas] lagi."
     ];
     const totalQuestions = questions.length;
     let userAnswers = {};
@@ -125,13 +133,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         submitBtn.disabled = true;
-        submitBtn.textContent = "Mengirim...";
 
         const absorptionScore = (userAnswers['q1'] + userAnswers['q2'] + userAnswers['q3']) / 3;
         const controlScore = (userAnswers['q4'] + userAnswers['q5'] + userAnswers['q6']) / 3;
         const rewardScore = (userAnswers['q7'] + userAnswers['q8'] + userAnswers['q9']) / 3;
         const globalScore = (absorptionScore + controlScore + rewardScore) / 3;
 
+        // Tampilkan hasil terlebih dahulu
+        displayResults({ 
+            global: globalScore, 
+            absorption: absorptionScore, 
+            control: controlScore, 
+            reward: rewardScore 
+        });
+
+        // Kirim data di latar belakang
         const formData = new FormData();
         formData.append('Nama', nameInput.value.trim());
         formData.append('Aktivitas', activityInput.value.trim());
@@ -153,22 +169,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             console.log('Sukses terkirim ke Google Sheet:', data);
-            displayResults({ 
-                global: globalScore, 
-                absorption: absorptionScore, 
-                control: controlScore, 
-                reward: rewardScore 
-            });
         })
         .catch(error => {
             console.error('Error saat mengirim ke Google Sheet:', error);
-            alert('Gagal menyimpan data, namun hasil Anda tetap akan ditampilkan.');
-            displayResults({ 
-                global: globalScore, 
-                absorption: absorptionScore, 
-                control: controlScore, 
-                reward: rewardScore 
-            });
         });
     });
     
