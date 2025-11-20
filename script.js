@@ -43,8 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function getColorForSlider(value) {
-        const colors = ["#BBDEFB", "#90CAF9", "#64B5F6", "#42A5F5", "#2196F3", "#1E88E5", "#1976D2"];
-        return colors[value - 1] || colors[0];
+        // 6-step palette (for values 1..6)
+        const colors = ["#BBDEFB", "#90CAF9", "#64B5F6", "#42A5F5", "#2196F3", "#1E88E5"];
+        return colors[Math.max(0, Math.min(colors.length - 1, value - 1))] || colors[0];
     }
 
     function generateQuestions(activity) {
@@ -58,14 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="question-text">${qNumber}. ${dynamicQuestionText}</p>
                 <div class="slider-wrapper">
                     <div class="slider-labels-top">
-                        <span class="slider-end-label">Sangat Tidak Setuju</span>
-                        <span class="slider-end-label">Sangat Setuju</span>
+                        <span class="slider-end-label">Sangat Tidak Sesuai</span>
+                        <span class="slider-end-label">Sangat Sesuai</span>
                     </div>
                     <div class="slider-container">
                         <span class="slider-value">1</span>
-                        <input type="range" min="1" max="7" value="1" class="rating-slider" id="q${qNumber}">
+                        <input type="range" min="1" max="6" value="1" class="rating-slider" id="q${qNumber}">
                         <div class="slider-labels">
-                            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+                            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
                         </div>
                     </div>
                 </div>`;
@@ -175,25 +176,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    const scale = (score) => ((score - 1) / 6) * 99 + 1;
+    // Map an average score in the 1..6 range to approximately 1..100 for display
+    const scale = (score) => ((score - 1) / 5) * 99 + 1;
 
     function getInterpretation(score) {
-        if (score > 85.7) return { text: "Sangat Tinggi", color: "#1976D2" };
-        if (score > 71.4) return { text: "Tinggi", color: "#1E88E5" };
-        if (score > 57.1) return { text: "Cukup Tinggi", color: "#2196F3" };
-        if (score > 42.8) return { text: "Sedang", color: "#42A5F5" };
-        if (score > 28.5) return { text: "Cukup Rendah", color: "#64B5F6" };
-        if (score > 14.2) return { text: "Rendah", color: "#90CAF9" };
-        return { text: "Sangat Rendah", color: "#BBDEFB" };
+        // Using 6 equal bands across 0-100 (approx 16.66% per band)
+        if (score > 83.33) return { text: "Sangat Tinggi", color: "#1E88E5" };
+        if (score > 66.66) return { text: "Tinggi", color: "#2196F3" };
+        if (score > 50.0) return { text: "Cukup Tinggi", color: "#42A5F5" };
+        if (score > 33.33) return { text: "Sedang", color: "#64B5F6" };
+        if (score > 16.66) return { text: "Cukup Rendah", color: "#90CAF9" };
+        return { text: "Rendah", color: "#BBDEFB" };
     }
     
     function updateSpectrumBar(score) {
         const spectrumBar = document.querySelector('.spectrum-bar');
         spectrumBar.innerHTML = '';
-        const colors = ["#BBDEFB", "#90CAF9", "#64B5F6", "#42A5F5", "#2196F3", "#1E88E5", "#1976D2"];
+        const colors = ["#BBDEFB", "#90CAF9", "#64B5F6", "#42A5F5", "#2196F3", "#1E88E5"];
         const interpretation = getInterpretation(score);
 
-        for(let i=0; i < 7; i++) {
+        for(let i=0; i < colors.length; i++) {
             const segment = document.createElement('div');
             segment.className = 'spectrum-segment';
             segment.style.backgroundColor = colors[i];
