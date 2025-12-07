@@ -17,14 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const questions = [
         "Saya hanyut ketika melakukan aktivitas [aktivitas].",
-        "Saya sangat fokus pada aktivitas [aktivitas].",
-        "Semua perhatian saya tertuju pada aktivitas [aktivitas].",
-        "Saya merasa bisa dengan mudah mengontrol apa yang saya lakukan.",
-        "Ketika [aktivitas], saya mengalir dengan mudah.",
-        "Ada rasa kelancaran dalam tindakan [aktivitas] saya.",
-        "Saya merasa pengalaman [aktivitas] berharga.",
-        "Pengalaman [aktivitas] terasa memuaskan.",
-        "Saya ingin merasakan perasaan dari pengalaman [aktivitas] lagi."
+        "Ketika [aktivitas], saya akan menjadi sangat fokus pada hal tersebut.",
+        "Ketika [aktivitas], saya akan memfokuskan semua perhatian pada hal tersebut.",
+        "Saya merasa bisa dengan mudah mengendalikan apa yang saya lakukan.",
+        "Ketika [aktivitas], seringkali saya melakukannya secara mengalir.",
+        "Ketika [aktivitas], seringkali saya merasa melakukannya dengan lancar.",
+        "Ketika [aktivitas], saya meyakini pengalamannya adalah hal yang berharga.",
+        "Seringkali saya mendapat pengalaman yang memuaskan ketika [aktivitas].",
+        "Untuk beberapa hal, saya ingin merasakan pengalaman [aktivitas] yang berulang."
     ];
     const totalQuestions = questions.length;
     let userAnswers = {};
@@ -72,8 +72,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>`;
             form.appendChild(questionCard);
             const slider = questionCard.querySelector('.rating-slider');
+            const valueSpan = questionCard.querySelector('.slider-value');
             slider.style.setProperty('--value-percent', `0%`);
             slider.style.setProperty('--slider-color', getColorForSlider(1));
+
+            // If user clicks/touches the slider at its current value (e.g. 1),
+            // an input event may not fire. Use pointerdown to register the
+            // current value as an answer so selecting "1" works on unanswered items.
+            slider.addEventListener('pointerdown', (e) => {
+                const id = slider.id;
+                const val = parseInt(slider.value);
+                if (!userAnswers[id]) {
+                    userAnswers[id] = val;
+                    updateProgress(Object.keys(userAnswers).length);
+                }
+                const percent = ((val - slider.min) / (slider.max - slider.min)) * 100;
+                slider.style.setProperty('--value-percent', `${percent}%`);
+                const newColor = getColorForSlider(val);
+                slider.style.setProperty('--slider-color', newColor);
+                if (valueSpan) {
+                    valueSpan.textContent = val;
+                    valueSpan.style.left = `calc(${percent}% + (${12 - percent * 0.24}px))`;
+                }
+                const parentCard = slider.closest('.question-card');
+                if (parentCard) {
+                    parentCard.classList.add('answered');
+                    parentCard.style.setProperty('--slider-color', newColor);
+                }
+            });
         });
     }
 
@@ -128,6 +154,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     submitBtn.addEventListener('click', () => {
+        // Ensure we have values for every question (use current slider value if not interacted)
+        for (let i = 1; i <= totalQuestions; i++) {
+            const key = `q${i}`;
+            if (!userAnswers[key]) {
+                const el = document.getElementById(key);
+                if (el) userAnswers[key] = parseInt(el.value);
+            }
+        }
+
         if (Object.keys(userAnswers).length < totalQuestions) {
             alert('Harap selesaikan semua pertanyaan sebelum melihat hasil.');
             return;
@@ -136,16 +171,18 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
 
         const absorptionScore = (userAnswers['q1'] + userAnswers['q2'] + userAnswers['q3']) / 3;
-        const controlScore = (userAnswers['q4'] + userAnswers['q5'] + userAnswers['q6']) / 3;
-        const rewardScore = (userAnswers['q7'] + userAnswers['q8'] + userAnswers['q9']) / 3;
-        const globalScore = (absorptionScore + controlScore + rewardScore) / 3;
+        // Enjoyment is the combination of Effortless Control (q4-q6) and Intrinsic Reward (q7-q9)
+        const enjoymentScore = (
+            userAnswers['q4'] + userAnswers['q5'] + userAnswers['q6'] +
+            userAnswers['q7'] + userAnswers['q8'] + userAnswers['q9']
+        ) / 6;
+        const globalScore = (absorptionScore + enjoymentScore) / 2;
 
         // Tampilkan hasil terlebih dahulu
         displayResults({ 
             global: globalScore, 
             absorption: absorptionScore, 
-            control: controlScore, 
-            reward: rewardScore 
+            enjoyment: enjoymentScore
         });
 
         // Kirim data di latar belakang
@@ -158,8 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         formData.append('SkorGlobal', scale(globalScore).toFixed(2));
         formData.append('SkorAbsorption', scale(absorptionScore).toFixed(2));
-        formData.append('SkorControl', scale(controlScore).toFixed(2));
-        formData.append('SkorReward', scale(rewardScore).toFixed(2));
+        formData.append('SkorEnjoyment', scale(enjoymentScore).toFixed(2));
 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrGWN7TPihIV1M5-tjehMkzy5DsJoJjDteZTQgKs9qebyP7CF7g42iQFkf0ot1Wmc/exec"; 
 
@@ -178,9 +214,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Map an average score in the 1..6 range to approximately 1..100 for display
     const scale = (score) => ((score - 1) / 5) * 99 + 1;
-
     function getInterpretation(score) {
-        // Using 6 equal bands across 0-100 (approx 16.66% per band)
+        // Using 6 equal bands across 0-100 (approx 16.66% per band) - kept for global spectrum
         if (score > 83.33) return { text: "Sangat Tinggi", color: "#1E88E5" };
         if (score > 66.66) return { text: "Tinggi", color: "#2196F3" };
         if (score > 50.0) return { text: "Cukup Tinggi", color: "#42A5F5" };
@@ -188,23 +223,93 @@ document.addEventListener('DOMContentLoaded', () => {
         if (score > 16.66) return { text: "Cukup Rendah", color: "#90CAF9" };
         return { text: "Rendah", color: "#BBDEFB" };
     }
+
+    // Interpret a scaled score (1..100) using provided cutoffs for each variable.
+    // Returns {text, color} where color maps to the palette used elsewhere.
+    function interpretByNorms(scaledScore, varName) {
+        // Ensure numeric
+        const s = Number(scaledScore);
+        if (isNaN(s)) return { text: '—', color: '#BBDEFB' };
+
+        if (varName === 'FA') {
+            // TOTAL_FA cutoffs (1-100 scale)
+            // Sangat Rendah: < 48.64
+            // Rendah: 48.64 – 59.32
+            // Cukup: 59.32 – 80.68
+            // Tinggi: 80.68 – 91.36
+            // Sangat Tinggi: > 91.36
+            if (s < 48.64) return { text: 'Sangat Rendah', color: '#BBDEFB' };
+            if (s <= 59.32) return { text: 'Rendah', color: '#90CAF9' };
+            if (s <= 80.68) return { text: 'Cukup', color: '#64B5F6' };
+            if (s <= 91.36) return { text: 'Tinggi', color: '#42A5F5' };
+            return { text: 'Sangat Tinggi', color: '#2196F3' };
+        }
+
+        if (varName === 'FE') {
+            // TOTAL_FEenjoyment cutoffs
+            // Sangat Rendah: < 51.64
+            // Rendah: 51.64 – 61.40
+            // Cukup: 61.40 – 80.92
+            // Sangat Tinggi: > 90.68
+            if (s < 51.64) return { text: 'Sangat Rendah', color: '#BBDEFB' };
+            if (s <= 61.40) return { text: 'Rendah', color: '#90CAF9' };
+            if (s <= 80.92) return { text: 'Cukup', color: '#64B5F6' };
+            if (s <= 90.68) return { text: 'Tinggi', color: '#42A5F5' };
+            return { text: 'Sangat Tinggi', color: '#2196F3' };
+        }
+
+        if (varName === 'GLOBAL') {
+            // TOTAL (Global) cutoffs
+            // Sangat Rendah : < 55.16
+            // Rendah : 55.16 – 65.38
+            // Cukup : 65.38 – 85.78
+            // Tinggi : 85.78 – 96.00
+            // Sangat Tinggi : > 96.00
+            if (s < 55.16) return { text: 'Sangat Rendah', color: '#BBDEFB' };
+            if (s <= 65.38) return { text: 'Rendah', color: '#90CAF9' };
+            if (s <= 85.78) return { text: 'Cukup', color: '#64B5F6' };
+            if (s <= 96.00) return { text: 'Tinggi', color: '#42A5F5' };
+            return { text: 'Sangat Tinggi', color: '#2196F3' };
+        }
+
+        // Fallback
+        return { text: '—', color: '#BBDEFB' };
+    }
     
     function updateSpectrumBar(score) {
         const spectrumBar = document.querySelector('.spectrum-bar');
         spectrumBar.innerHTML = '';
-        const colors = ["#BBDEFB", "#90CAF9", "#64B5F6", "#42A5F5", "#2196F3", "#1E88E5"];
-        const interpretation = getInterpretation(score);
+        // Render spectrum segments according to GLOBAL cutoffs (1-100 scale)
+        // GLOBAL cutoffs widths: [0-55.16), [55.16-65.38], [65.38-85.78], [85.78-96.00], (96.00-100]
+        const widths = [55.16, 10.22, 20.4, 10.22, 4.0];
+        const colors = ["#BBDEFB", "#90CAF9", "#64B5F6", "#42A5F5", "#2196F3"];
+        const interpretation = interpretByNorms(score, 'GLOBAL');
 
-        for(let i=0; i < colors.length; i++) {
+        let cumulative = 0;
+        for (let i = 0; i < colors.length; i++) {
             const segment = document.createElement('div');
             segment.className = 'spectrum-segment';
             segment.style.backgroundColor = colors[i];
+            // use flex-basis so segments reflect actual widths
+            segment.style.flex = `0 0 ${widths[i]}%`;
+            segment.style.maxWidth = `${widths[i]}%`;
+            segment.style.boxSizing = 'border-box';
+            // highlight the segment that corresponds to interpretation
+            // (match by color)
             if (colors[i] === interpretation.color) {
-                segment.style.border = '2px solid #333';
-                segment.style.transform = 'scale(1.1)';
+                // Highlight by solid border only (no transform/animation)
+                segment.style.border = '2px solid rgba(0,0,0,0.45)';
             }
             spectrumBar.appendChild(segment);
+            cumulative += widths[i];
         }
+
+        // Add a marker to indicate the exact score position on the 1-100 scale
+        const marker = document.createElement('div');
+        marker.className = 'spectrum-marker';
+        const clamped = Math.max(0, Math.min(100, Number(score)));
+        marker.style.left = `${clamped}%`;
+        spectrumBar.appendChild(marker);
     }
     
     function displayResults(scores) {
@@ -215,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultSummary.innerHTML = `<p><strong>Nama:</strong> ${nameInput.value}</p><p><strong>Aktivitas:</strong> ${activityInput.value}</p>`;
         
         const scaledGlobal = scale(scores.global);
-        const globalInterpretation = getInterpretation(scaledGlobal);
+        const globalInterpretation = interpretByNorms(scaledGlobal, 'GLOBAL');
         document.getElementById('global-score-value').innerHTML = `${Math.round(scaledGlobal)} <span>/ 100</span>`;
         const globalInterpElement = document.getElementById('global-interpretation');
         globalInterpElement.textContent = globalInterpretation.text;
@@ -223,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const leftContent = document.querySelector('.results-left-content');
         const headerTitle = document.querySelector('.results-left-content .results-header h1');
         const summaryParagraphs = document.querySelectorAll('.results-left-content #result-summary p');
-        const scoreColor = getInterpretation(scaledGlobal).color;
+        const scoreColor = globalInterpretation.color;
         leftContent.style.backgroundColor = scoreColor;
 
         const isDarkBackground = (color) => {
@@ -246,29 +351,23 @@ document.addEventListener('DOMContentLoaded', () => {
         
         updateSpectrumBar(scaledGlobal);
         
+        // Absorption: scale for display, interpret based on FA cutoffs (1-100)
         const scaledAbsorption = scale(scores.absorption);
-        const absorptionInterpretation = getInterpretation(scaledAbsorption);
+        const absorptionInterpretation = interpretByNorms(scaledAbsorption, 'FA');
         document.getElementById('absorption-score').textContent = `${scaledAbsorption.toFixed(2)} / 100`;
         const absorptionInterpElement = document.getElementById('absorption-interpretation');
         absorptionInterpElement.textContent = absorptionInterpretation.text;
         absorptionInterpElement.style.color = absorptionInterpretation.color;
         animateCircularBar('absorption-circle', 'absorption-value', scaledAbsorption, absorptionInterpretation.color);
 
-        const scaledControl = scale(scores.control);
-        const controlInterpretation = getInterpretation(scaledControl);
-        document.getElementById('control-score').textContent = `${scaledControl.toFixed(2)} / 100`;
-        const controlInterpElement = document.getElementById('control-interpretation');
-        controlInterpElement.textContent = controlInterpretation.text;
-        controlInterpElement.style.color = controlInterpretation.color;
-        animateCircularBar('control-circle', 'control-value', scaledControl, controlInterpretation.color);
-        
-        const scaledReward = scale(scores.reward);
-        const rewardInterpretation = getInterpretation(scaledReward);
-        document.getElementById('reward-score').textContent = `${scaledReward.toFixed(2)} / 100`;
-        const rewardInterpElement = document.getElementById('reward-interpretation');
-        rewardInterpElement.textContent = rewardInterpretation.text;
-        rewardInterpElement.style.color = rewardInterpretation.color;
-        animateCircularBar('reward-circle', 'reward-value', scaledReward, rewardInterpretation.color);
+        // Enjoyment: scale for display, interpret based on FE cutoffs (1-100)
+        const scaledEnjoyment = scale(scores.enjoyment);
+        const enjoymentInterpretation = interpretByNorms(scaledEnjoyment, 'FE');
+        document.getElementById('enjoyment-score').textContent = `${scaledEnjoyment.toFixed(2)} / 100`;
+        const enjoymentInterpElement = document.getElementById('enjoyment-interpretation');
+        enjoymentInterpElement.textContent = enjoymentInterpretation.text;
+        enjoymentInterpElement.style.color = enjoymentInterpretation.color;
+        animateCircularBar('enjoyment-circle', 'enjoyment-value', scaledEnjoyment, enjoymentInterpretation.color);
 
         window.scrollTo(0, 0);
     }
